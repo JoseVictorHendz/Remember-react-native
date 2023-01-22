@@ -1,3 +1,5 @@
+import React, { useState } from "react"
+
 import { Text, View, TextInput, TouchableOpacity, FlatList, Alert } from "react-native"
 
 import { Participant } from "../../components/Participant"
@@ -6,23 +8,27 @@ import { styles } from "./styles"
 
 export function Home() {
 
-    const participants = ["jose", "joao", "pedro", "rodrigo", "cleberton", "vitor", "giovana", "samela", "teu pai de calcinha", "60NoMeuSOfa", "batatinha"]
+    const [participants, setParticipants] = useState<string[]>([]);
+    const [participantsName, setParticipantsName] = useState('');
 
-    function handleParticiopantAdd(name: string) {
-        if(participants.includes(name)) {
-            return Alert.alert("Participante Existe", `Ja existe um participante com o nome de ${name} na lista`)
+    function handleParticiopantAdd() {
+        if(participants.includes(participantsName)) {
+            return Alert.alert("Participante Existe", `Ja existe um participante com o nome de ${participantsName} na lista`)
         }
+
+        setParticipants(prevState => [...prevState, participantsName]);
+        setParticipantsName('');
     }
 
     function handleParticiopantRemove(name: string) {
         Alert.alert("Remover", `Remover o participante ${name}?`, [
             {
                 text: "Sim",
-                onPress: () => Alert.alert("Deletado!")
+                onPress: () => setParticipants(prevState => prevState.filter(participant => participant !== name))
             },
             {
                 text: "Nao",
-               style: "cancel"
+                style: "cancel"
             }
         ])
     }
@@ -35,17 +41,18 @@ export function Home() {
 
         <Text style={styles.eventDate}>
             Quinta, 19 de janeiro de 2023
-        </Text>
+        </Text> 
 
         <View style={styles.form}>
             <TextInput 
                 style={styles.input}
                 placeholder="Nome do participante"
                 placeholderTextColor="#6B6B6B"
-                keyboardType="numeric"
+                onChangeText={setParticipantsName}
+                value={participantsName}
             />
 
-            <TouchableOpacity style={styles.button} onPress={() => handleParticiopantAdd("jose")}>
+            <TouchableOpacity style={styles.button} onPress={() => handleParticiopantAdd()}>
                 <Text style={styles.buttonText}>
                     +
                 </Text>
